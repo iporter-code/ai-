@@ -24,6 +24,7 @@ class Settings:
     index_dir: Path
     embedding_cache_dir: Path | None = None
     embedding_model_path: Path | None = None
+    embedding_query_prefix: str = ""
 
     @property
     def chunks_path(self) -> Path:
@@ -60,4 +61,5 @@ def get_settings() -> Settings:
             os.getenv("FASTEMBED_CACHE_DIR", ROOT / ".cache" / "fastembed")
         ),
         embedding_model_path=embedding_model_path,
+        embedding_query_prefix=os.getenv("EMBEDDING_QUERY_PREFIX", ""),
     )

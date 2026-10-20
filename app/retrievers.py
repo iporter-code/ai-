@@ -85,6 +85,7 @@ class VectorRetriever:
         index_dir: Path,
         cache_dir: Path | None = None,
         model_path: Path | None = None,
+        query_prefix: str = "",
     ):
         self.chunks = chunks
         self.model_name = model_name
@@ -92,6 +93,7 @@ class VectorRetriever:
         self.index_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self.model_path = Path(model_path) if model_path else None
+        self.query_prefix = query_prefix
         self._model = None
         self._embeddings = self._load_or_build()
 
@@ -159,7 +161,8 @@ class VectorRetriever:
         if not self.chunks:
             return []
         query_vector = np.asarray(
-            next(iter(self._get_model().embed([query]))), dtype=np.float32
+            next(iter(self._get_model().embed([self.query_prefix + query]))),
+            dtype=np.float32,
         )
         query_vector = query_vector / max(float(np.linalg.norm(query_vector)), 1e-8)
         scores = self._embeddings @ query_vector
@@ -180,5 +183,6 @@ def load_retriever(mode: str, chunks: list[Chunk], settings):
             settings.vector_dir,
             settings.embedding_cache_dir,
             settings.embedding_model_path,
+            settings.embedding_query_prefix,
         )
     raise ValueError(f"未知检索方式：{mode}（可选 bm25 / vector）")
