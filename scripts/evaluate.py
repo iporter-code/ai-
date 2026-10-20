@@ -163,13 +163,13 @@ def main() -> int:
         return 1
     if "example" in args.questions.stem:
         print("注意：example_questions.jsonl 只是格式示例，不能作为最终评测集。")
-    if args.limit:
-        questions = questions[: args.limit]
     if len(questions) != 20:
         print(f"提示：当前评测集有 {len(questions)} 题，作业要求 20 题。")
 
     chunks = load_chunks(settings.chunks_path)
     validate_questions(questions, chunks)
+    if args.limit:
+        questions = questions[: args.limit]
     suffix = args.out_suffix
     if suffix is None:
         suffix = "_retrieval" if args.retrieval_only else ""
