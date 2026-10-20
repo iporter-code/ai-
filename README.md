@@ -155,7 +155,7 @@ python scripts/score.py eval/results/results_bm25.csv eval/results/results_vecto
 pytest -q
 ```
 
-24 个单元测试覆盖切分、PDF 读取、BM25、向量排序、覆盖率、引用核验、拒答判定与格式化，不下载模型、不调用外部 API。
+25 个单元测试覆盖切分、PDF 读取、BM25、向量排序、覆盖率、引用核验、拒答判定与格式化，不下载模型、不调用外部 API。
 
 ## 项目结构
 

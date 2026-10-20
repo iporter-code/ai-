@@ -178,6 +178,21 @@ def test_answer_question_keeps_valid_citation(work_dir, monkeypatch):
     assert result.citations[0].chunk.doc_id == "notes.md"
 
 
+def test_format_result_warns_when_no_citation():
+    result = RAGResult(
+        question="阈值是多少",
+        mode="vector",
+        answer="阈值是 0.35。",
+        refused=False,
+        refusal_reason="",
+        citations=[],
+        retrieved=[make_candidate(0.8)],
+        latency_s=0.1,
+    )
+    rendered = format_result(result)
+    assert "未经出处验证" in rendered
+
+
 def test_format_result_shows_refusal():
     result = RAGResult(
         question="作者养了几只猫",

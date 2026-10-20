@@ -322,6 +322,7 @@ def format_result(result: RAGResult) -> str:
             lines.append(f"> {_snippet(chunk.text)}")
             lines.append("")
     else:
+        lines.insert(0, "> 注意：模型未给出可核验引用，以下回答未经出处验证。\n")
         lines.append("模型未在回答中标注引用编号，以下为本次检索到的资料：")
         lines.append("")
         for index, candidate in enumerate(result.retrieved[:3], start=1):
