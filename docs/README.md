@@ -2,7 +2,7 @@
 
 ## 交付物（4 个）
 
-- `实验报告.pdf`：最终实验报告，4 页 A4，含系统架构图、评测表格与结论、两幅录屏截图、AI 错误清单；
+- `实验报告.pdf`：最终实验报告，4 页 A4，**5 图 5 表**：系统架构、指标对比、逐题延迟、真实运行界面、Gradio 界面；含评测结论、两问分析、AI 错误清单；
 - `architecture.png`：系统架构图，由 `scripts/make_architecture.py` 生成；
 - `演示录屏.mp4`：3 分 21 秒演示，含 2 道陷阱题当场拒答（5.6MB，随仓库提供）；
 - `演示录屏脚本.md`：分镜、时间轴、制作方式与复现命令。
@@ -14,7 +14,9 @@
 - `demo_run.log` / `demo_run.json`：演示视频的原始运行日志（问题、答案、引用、首 token、Top-4 分数），
   由 `scripts/record_demo.py` 生成，可用来核对视频里的每个字符；
 - `demo.ps1`：早期录屏用过的命令脚本，已由上面两条脚本取代；
-- `report_shots/`：报告插图；`demo_cards/`：早期录屏的片尾卡片（新视频已不用）。
+- `report_shots/`：报告插图。`fig_screen.png` 由 `scripts/make_report_figures.py` 生成，
+  `fig_metrics.png` / `fig_latency.png` 由 `scripts/make_report_charts.py` 从 `eval/results` 现算，
+  `ui.png` 是 `python -m app.ui` 的真实截图；`demo_cards/` 是早期录屏的片尾卡片（新视频已不用）。
 
 ## internal/
 
