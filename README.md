@@ -16,7 +16,7 @@
 | 可交互界面 | Gradio Web；另有 CLI |
 | 两种检索各跑 20 题 | `eval/questions.jsonl`；`eval/results/results_*.csv` |
 | 四项指标 | `scripts/score.py`；`eval/results/metrics.md` |
-| 3–5 分钟演示 | `docs/演示录屏.mp4`，脚本见 `docs/演示录屏脚本.md` |
+| 3–5 分钟演示 | [Releases](https://github.com/iporter-code/ai-/releases/latest) 里的 `演示录屏.mp4`（3:00，22MB，仓库内不放以控制体积），脚本见 `docs/演示录屏脚本.md` |
 
 ## 快速开始
 
@@ -187,7 +187,7 @@ docs/
   architecture.png
   实验报告.md / 实验报告.pdf
   AI错误清单.md
-  演示录屏脚本.md / 演示录屏.mp4
+  演示录屏脚本.md
 tests/
 ```
 

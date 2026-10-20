@@ -4,7 +4,7 @@
 
 - `实验报告.pdf`：最终实验报告，4 页 A4，含系统架构图、评测表格与结论、两幅录屏截图、AI 错误清单；
 - `architecture.png`：系统架构图，由 `scripts/make_architecture.py` 生成；
-- `演示录屏.mp4`：3 分 00 秒真机演示，CLI 操作，含 2 道陷阱题当场拒答；
+- `演示录屏.mp4`：3 分 00 秒真机演示，CLI 操作，含 2 道陷阱题当场拒答。**22MB，不入库**，请到 [Releases](https://github.com/iporter-code/ai-/releases/latest) 下载；
 - `演示录屏脚本.md`：分镜、真实命令与复现方式。
 
 ## 辅助文件
