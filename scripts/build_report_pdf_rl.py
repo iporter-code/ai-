@@ -93,7 +93,7 @@ rl_paragraph.wordSplit = _word_split_fixed
 rl_paragraph.cjkFragSplit = _cjk_split_fixed
 
 MD_PATH = ROOT / "docs" / "实验报告.md"
-PDF_PATH = ROOT / "docs" / "实验报告.pdf"
+PDF_PATH = ROOT / "docs" / "实验报告_含截图.pdf"
 DOCS_DIR = ROOT / "docs"
 
 FONT_DIR = Path("C:/Windows/Fonts")
@@ -538,8 +538,6 @@ def build_body(blocks, content_width, include_appendix=False):
                 else:
                     break
             heading_style = S_H2 if kind == "h2" else S_H3
-            if kind == "h2" and str(value).startswith("4 "):
-                story.append(PageBreak())
             group = [Paragraph(rich(str(value)), heading_style)]
             if i + 1 < len(blocks):
                 next_kind, next_value = blocks[i + 1]

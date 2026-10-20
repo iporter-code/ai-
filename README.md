@@ -151,7 +151,7 @@ python scripts/score.py eval/results/results_bm25.csv eval/results/results_vecto
 | 引用给出率 | 93.3%（14/15） | 100%（14/14） |
 | 引用文档准确率 | 100% | 100% |
 
-逐题结果见 [`eval/results/metrics.md`](eval/results/metrics.md)，完整分析见 [`docs/实验报告.pdf`](docs/实验报告.pdf)。
+逐题结果见 [`eval/results/metrics.md`](eval/results/metrics.md)，完整分析见 [`docs/实验报告_含截图.pdf`](docs/实验报告_含截图.pdf)。
 
 ## 测试
 
@@ -183,7 +183,7 @@ eval/
   results/        逐题 CSV/JSON 与 metrics.md
 docs/
   architecture.png
-  实验报告.md / 实验报告.pdf
+  实验报告.md / 实验报告_含截图.pdf
   AI错误清单.md
   演示录屏脚本.md / 演示录屏.mp4
 tests/
