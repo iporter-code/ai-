@@ -134,6 +134,11 @@ def metrics_table(rows: list[dict]) -> str:
         lines.append(
             f"\n> 注意：还有 {summary['total'] - summary['judged']} 题未填 correct。"
         )
+    if summary["errors"]:
+        lines.append(
+            f"\n> 注意：有 {summary['errors']} 道非陷阱题没有答案（调用失败），"
+            "已在正确率/引用率中排除，未计入幻觉。"
+        )
     return "\n".join(lines)
 
 
