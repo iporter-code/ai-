@@ -24,5 +24,3 @@ docs/demo_shots/
 # 工作区元数据（记忆/缓存），不属于交付内容
 .workbuddy/
 
-# 演示录屏体积较大（22MB），改由 GitHub Release 附件分发
-docs/演示录屏.mp4

@@ -4,15 +4,17 @@
 
 - `实验报告.pdf`：最终实验报告，4 页 A4，含系统架构图、评测表格与结论、两幅录屏截图、AI 错误清单；
 - `architecture.png`：系统架构图，由 `scripts/make_architecture.py` 生成；
-- `演示录屏.mp4`：3 分 00 秒真机演示，CLI 操作，含 2 道陷阱题当场拒答。**22MB，不入库**，请到 [Releases](https://github.com/iporter-code/ai-/releases/latest) 下载；
-- `演示录屏脚本.md`：分镜、真实命令与复现方式。
+- `演示录屏.mp4`：3 分 21 秒演示，含 2 道陷阱题当场拒答（5.6MB，随仓库提供）；
+- `演示录屏脚本.md`：分镜、时间轴、制作方式与复现命令。
 
 ## 辅助文件
 
 - `实验报告.md`：报告源文件。改完用 `python scripts/build_report_pdf_rl.py` 重新导出 `实验报告.pdf`；
 - `AI错误清单.md`：AI 生成代码的 6 条错误与修正记录（报告 §5 的完整版）；
-- `demo.ps1`：录屏时执行的命令脚本；
-- `report_shots/`、`demo_cards/`：报告插图与片尾卡片用的截图。
+- `demo_run.log` / `demo_run.json`：演示视频的原始运行日志（问题、答案、引用、首 token、Top-4 分数），
+  由 `scripts/record_demo.py` 生成，可用来核对视频里的每个字符；
+- `demo.ps1`：早期录屏用过的命令脚本，已由上面两条脚本取代；
+- `report_shots/`：报告插图；`demo_cards/`：早期录屏的片尾卡片（新视频已不用）。
 
 ## internal/
 
