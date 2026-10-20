@@ -16,7 +16,10 @@ pip-*
 .pip_probe/
 previous_eval/
 .commandcode/
-docs/作业评审意见.md
-docs/演示录屏关键截图.pdf
+# 内部自查材料（评审意见、核查记录、旧版报告），不进提交包
+docs/internal/
 docs/demo_shots/
 .DS_Store
+
+# 工作区元数据（记忆/缓存），不属于交付内容
+.workbuddy/

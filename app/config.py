@@ -25,6 +25,7 @@ class Settings:
     embedding_cache_dir: Path | None = None
     embedding_model_path: Path | None = None
     embedding_query_prefix: str = ""
+    strict_slot_check: bool = False
 
     @property
     def chunks_path(self) -> Path:
@@ -62,4 +63,6 @@ def get_settings() -> Settings:
         ),
         embedding_model_path=embedding_model_path,
         embedding_query_prefix=os.getenv("EMBEDDING_QUERY_PREFIX", ""),
+        strict_slot_check=os.getenv("STRICT_SLOT_CHECK", "0").strip().lower()
+        in {"1", "true", "yes", "on"},
     )

@@ -151,6 +151,53 @@ def _looks_like_refusal(answer: str) -> bool:
     return False
 
 
+_DATE_QUESTION_RE = re.compile(
+    r"几月几[日号]|几号|哪天|哪一天|什么时候|什么时间|何时|哪一年|几几年|日期|截止"
+)
+_DATE_IN_TEXT_RE = re.compile(
+    r"\d{1,2}\s*月\s*\d{1,2}\s*[日号]|\d{4}\s*年|下?\s*周[一二三四五六日天]|明天|后天"
+)
+_ENTITY_STOPWORDS = {
+    "这门课", "这门", "课程", "资料", "文档", "作者", "上面", "下面", "问题",
+    "答案", "内容", "时候", "时间", "日期", "笔记", "具体", "大约",
+}
+
+
+def _question_entities(question: str) -> list[str]:
+    """抽出问题里的名词性实体（事件/对象），用于核对资料是否真的谈到它。"""
+    import jieba.posseg as pseg
+
+    entities: list[str] = []
+    for word, flag in pseg.cut(question):
+        if flag.startswith("n") and len(word) >= 2 and word not in _ENTITY_STOPWORDS:
+            entities.append(word)
+    return entities
+
+
+def _date_slot_guard(question: str, candidates: list[Candidate]) -> str:
+    """问时间类问题时，要求资料里「该事件 + 日期」同时出现，否则拒答。
+
+    q17（“期末考试安排在几月几日”）就是靠这一层挡住的：资料里只有
+    “作业 1 于 10 月 21 日截止”，日期和“期末考试”不在同一处，模型却把
+    截止日搬成了考试日。默认关闭（STRICT_SLOT_CHECK=1 启用），因为它是
+    规则式判断，可能对“期末考核/结课安排”这类同义改写产生过度拒答。
+    """
+    if not _DATE_QUESTION_RE.search(question):
+        return ""
+    entities = _question_entities(question)
+    if not entities:
+        return ""
+    for candidate in candidates:
+        text = candidate.chunk.text
+        if not _DATE_IN_TEXT_RE.search(text):
+            continue
+        if any(entity in text for entity in entities):
+            return ""
+    return (
+        f"问题问的是「{entities[0]}」的时间，但资料中没有同时出现该事件和日期"
+    )
+
+
 def _retrieval_gate(
     question: str, retriever_name: str, candidates: list[Candidate], settings: Settings
 ) -> str:
@@ -178,6 +225,7 @@ def _call_llm(
     candidates: list[Candidate],
     settings: Settings,
     on_first_token=None,
+    on_delta=None,
 ) -> str:
     if not settings.llm_api_key and "pollinations" not in settings.llm_base_url.lower():
         raise RuntimeError(
@@ -219,6 +267,8 @@ def _call_llm(
                 if not parts and on_first_token is not None:
                     on_first_token()
                 parts.append(content)
+                if on_delta is not None:
+                    on_delta(content)
             text = "".join(parts).strip()
             if not text:
                 # Some OpenAI-compatible gateways occasionally return an empty
@@ -251,12 +301,15 @@ def answer_question(
     retriever,
     settings: Settings,
     top_k: int | None = None,
+    on_delta=None,
 ) -> RAGResult:
     started = time.perf_counter()
     candidates = retriever.search(question, top_k or settings.top_k)
     refusal_reason = _retrieval_gate(
         question, retriever.name, candidates, settings
     )
+    if not refusal_reason and settings.strict_slot_check:
+        refusal_reason = _date_slot_guard(question, candidates)
     if refusal_reason:
         return RAGResult(
             question=question,
@@ -278,7 +331,11 @@ def answer_question(
         first_token_s = time.perf_counter() - started
 
     raw_answer = _call_llm(
-        question, candidates, settings, on_first_token=mark_first_token
+        question,
+        candidates,
+        settings,
+        on_first_token=mark_first_token,
+        on_delta=on_delta,
     )
     latency = time.perf_counter() - started
 

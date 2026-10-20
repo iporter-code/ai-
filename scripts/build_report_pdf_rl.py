@@ -93,7 +93,7 @@ rl_paragraph.wordSplit = _word_split_fixed
 rl_paragraph.cjkFragSplit = _cjk_split_fixed
 
 MD_PATH = ROOT / "docs" / "实验报告.md"
-PDF_PATH = ROOT / "docs" / "实验报告_含截图.pdf"
+PDF_PATH = ROOT / "docs" / "实验报告.pdf"
 DOCS_DIR = ROOT / "docs"
 
 FONT_DIR = Path("C:/Windows/Fonts")

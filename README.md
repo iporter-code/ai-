@@ -74,7 +74,7 @@ python -m app.cli ask "课程建议的切分长度和作者实验结论一致吗
 python -m app.ui
 ```
 
-打开 `http://127.0.0.1:7860`，可切换检索方式、调整 Top-K、勾选“显示检索详情”查看分数与命中文档。
+打开 `http://127.0.0.1:7860`，可切换检索方式、调整 Top-K、勾选“显示检索详情”查看分数与命中文档；答案逐字流式显示，不用等整段生成完。
 
 ## 语料
 
@@ -105,6 +105,8 @@ python -m app.ui
 2. **生成约束**：提示词要求资料不足时只输出 `INSUFFICIENT_CONTEXT`，程序再识别中英文拒答措辞。这一层负责挡住“词面相关但实际答不了”的陷阱题。
 
 阈值是在当前语料上实测校准的，相关题与陷阱题的分数有重叠，所以不能把检索闸门当成万能判别器；换语料后必须重测。
+
+另有一个**默认关闭**的第三层 `STRICT_SLOT_CHECK=1`：问时间类问题（几月几日、哪天、截止）时，要求同一个片段里同时出现问题中的事件词和日期，否则直接拒答。它是针对 q17 写的——资料只有“作业 1 于 10 月 21 日截止”，模型却把截止日搬成考试日。默认关闭，是为了让 `eval/results` 里那组 90%/20% 的实测数字继续有效；开启后 q17 会在闸门处被拒（离线可验证，见 `tests/test_rag.py::test_date_slot_guard_blocks_far_domain_date_question`），但规则式判断对“期末考核”这类同义改写可能过度拒答，需要重跑 20 题才能确认净收益。
 
 ### 引用
 
@@ -151,7 +153,7 @@ python scripts/score.py eval/results/results_bm25.csv eval/results/results_vecto
 | 引用给出率 | 93.3%（14/15） | 100%（14/14） |
 | 引用文档准确率 | 100% | 100% |
 
-逐题结果见 [`eval/results/metrics.md`](eval/results/metrics.md)，完整分析见 [`docs/实验报告_含截图.pdf`](docs/实验报告_含截图.pdf)。
+逐题结果见 [`eval/results/metrics.md`](eval/results/metrics.md)，完整分析见 [`docs/实验报告.pdf`](docs/实验报告.pdf)。
 
 ## 测试
 
@@ -159,7 +161,7 @@ python scripts/score.py eval/results/results_bm25.csv eval/results/results_vecto
 pytest -q
 ```
 
-28 个单元测试覆盖切分、PDF 读取、BM25、向量排序、覆盖率、引用核验、拒答判定与格式化，不下载模型、不调用外部 API。
+33 个单元测试覆盖切分、PDF 读取、BM25、向量排序、覆盖率、引用核验、引号变体、拒答判定、日期槽位校验、流式回调与格式化，不下载模型、不调用外部 API。
 
 ## 项目结构
 
@@ -183,7 +185,7 @@ eval/
   results/        逐题 CSV/JSON 与 metrics.md
 docs/
   architecture.png
-  实验报告.md / 实验报告_含截图.pdf
+  实验报告.md / 实验报告.pdf
   AI错误清单.md
   演示录屏脚本.md / 演示录屏.mp4
 tests/
@@ -200,6 +202,13 @@ tests/
 - **延迟受免费接口影响**：首 token 与端到端时间都已记录，但 Pollinations 免费接口排队波动较大，绝对值只代表本机当天网络。
 
 ## 常见问题
+
+**`.venv\Scripts\python.exe` 报 `failed to open ...pyvenv.cfg`**：这是 Windows 下 venv 启动器在**中文路径**里解析不到自己的配置导致的（本项目目录名含中文），与代码无关。两个办法：把项目目录改成英文名后重建 venv，或者在英文路径建环境再用绝对路径调用，例如：
+
+```bash
+python -m venv C:\venvs\rag
+C:\venvs\rag\Scripts\python.exe -m app.ui
+```
 
 **首次 ingest 卡在下载模型**：设置 `HF_ENDPOINT=https://hf-mirror.com`，或把已下载的 ONNX 目录写到 `EMBEDDING_MODEL_PATH`。也可以先 `python -m app.cli ingest --no-vector` 只建关键词索引。
 

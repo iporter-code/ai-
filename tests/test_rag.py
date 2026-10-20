@@ -3,6 +3,7 @@ from app.corpus import Chunk
 from app.rag import (
     REFUSAL_TEXT,
     RAGResult,
+    _date_slot_guard,
     _extract_citations,
     _looks_like_refusal,
     _retrieval_gate,
@@ -160,7 +161,7 @@ def test_answer_question_refuses_before_calling_llm(work_dir, monkeypatch):
 def test_answer_question_maps_model_refusal(work_dir, monkeypatch):
     settings = make_settings(work_dir)
     monkeypatch.setattr(
-        "app.rag._call_llm", lambda question, candidates, settings, on_first_token=None: "INSUFFICIENT_CONTEXT"
+        "app.rag._call_llm", lambda question, candidates, settings, on_first_token=None, on_delta=None: "INSUFFICIENT_CONTEXT"
     )
     result = answer_question("陷阱问题", FakeRetriever(0.9), settings)
     assert result.refused
@@ -170,7 +171,7 @@ def test_answer_question_maps_model_refusal(work_dir, monkeypatch):
 def test_answer_question_keeps_valid_citation(work_dir, monkeypatch):
     settings = make_settings(work_dir)
     monkeypatch.setattr(
-        "app.rag._call_llm", lambda question, candidates, settings, on_first_token=None: "阈值是 0.35 [1]。"
+        "app.rag._call_llm", lambda question, candidates, settings, on_first_token=None, on_delta=None: "阈值是 0.35 [1]。"
     )
     result = answer_question("阈值是多少", FakeRetriever(0.9), settings)
     assert not result.refused
@@ -207,3 +208,71 @@ def test_format_result_shows_refusal():
     rendered = format_result(result)
     assert REFUSAL_TEXT in rendered
     assert "拒答判定" in rendered
+
+
+def _chunk(text: str, doc_id: str = "notes.md", index: int = 0, score: float = 0.8):
+    return Candidate(
+        Chunk(id=f"{doc_id}::{index}", doc_id=doc_id, chunk_index=index, text=text),
+        score,
+    )
+
+
+def test_date_slot_guard_blocks_far_domain_date_question():
+    """q17 复现：资料只有“作业 10 月 21 日截止”，没有“期末考试”日期。"""
+    candidates = [
+        _chunk("作业 1 于 10 月 21 日截止，提交到课程平台。"),
+        _chunk("向量检索用 bge-small-zh，维度 512。", index=1),
+    ]
+    reason = _date_slot_guard("这门课的期末考试安排在几月几日？", candidates)
+    assert reason
+    assert "期末考试" in reason
+
+
+def test_date_slot_guard_allows_supported_date_question():
+    candidates = [_chunk("期末考试安排在 2027 年 1 月 8 日，闭卷。")]
+    assert _date_slot_guard("期末考试安排在几月几日？", candidates) == ""
+
+
+def test_date_slot_guard_ignores_non_date_questions():
+    candidates = [_chunk("作业 1 于 10 月 21 日截止。")]
+    assert _date_slot_guard("BM25 的 k1 控制什么？", candidates) == ""
+
+
+def test_slot_check_can_refuse_before_calling_llm(work_dir, monkeypatch):
+    from dataclasses import replace
+
+    settings = replace(make_settings(work_dir), strict_slot_check=True)
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("槽位不匹配时不应调用大模型")
+
+    monkeypatch.setattr("app.rag._call_llm", fail_if_called)
+
+    class FarDomainRetriever:
+        name = "vector"
+
+        def search(self, query: str, top_k: int = 4):
+            return [_chunk("作业 1 于 10 月 21 日截止，提交到课程平台。", score=0.9)]
+
+    result = answer_question("这门课的期末考试安排在几月几日？", FarDomainRetriever(), settings)
+    assert result.refused
+    assert result.from_gate
+    assert "期末考试" in result.refusal_reason
+
+
+def test_answer_question_forwards_streaming_deltas(work_dir, monkeypatch):
+    settings = make_settings(work_dir)
+
+    def fake_llm(question, candidates, settings, on_first_token=None, on_delta=None):
+        for piece in ("阈值", "是 0.35 [1]。"):
+            if on_delta is not None:
+                on_delta(piece)
+        if on_first_token is not None:
+            on_first_token()
+        return "阈值是 0.35 [1]。"
+
+    monkeypatch.setattr("app.rag._call_llm", fake_llm)
+    seen: list[str] = []
+    result = answer_question("阈值是多少", FakeRetriever(0.9), settings, on_delta=seen.append)
+    assert "".join(seen) == "阈值是 0.35 [1]。"
+    assert not result.refused

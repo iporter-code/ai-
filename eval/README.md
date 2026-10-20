@@ -48,4 +48,4 @@ python scripts/evaluate.py --mode both --sleep 32
 python scripts/score.py eval/results/results_bm25.csv eval/results/results_vector.csv
 ```
 
-输出：`eval/results/results_*.csv`、`raw_*.jsonl`、`metrics.md`。CSV/JSONL 保存 `answer`、`raw_answer`、`refusal_reason`、`from_gate`、`source_docs`、`citation_details`，可直接复核拒答层和引用来源。检索-only 写到 `*_retrieval.*`，不会覆盖正式结果。最终结果见 `metrics.md` 和 `docs/实验报告_含截图.pdf`。
+输出：`eval/results/results_*.csv`、`raw_*.jsonl`、`metrics.md`。CSV/JSONL 保存 `answer`、`raw_answer`、`refusal_reason`、`from_gate`、`source_docs`、`citation_details`，可直接复核拒答层和引用来源。检索-only 写到 `*_retrieval.*`，不会覆盖正式结果。最终结果见 `metrics.md` 和 `docs/实验报告.pdf`。
