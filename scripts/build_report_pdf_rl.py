@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 from pathlib import Path
@@ -93,7 +94,8 @@ rl_paragraph.wordSplit = _word_split_fixed
 rl_paragraph.cjkFragSplit = _cjk_split_fixed
 
 MD_PATH = ROOT / "docs" / "实验报告.md"
-PDF_PATH = ROOT / "docs" / "实验报告.pdf"
+# 报告被查看器占用时，可用 REPORT_PDF_OUT 输出到临时路径
+PDF_PATH = Path(os.getenv("REPORT_PDF_OUT") or ROOT / "docs" / "实验报告.pdf")
 DOCS_DIR = ROOT / "docs"
 
 FONT_DIR = Path("C:/Windows/Fonts")
@@ -104,7 +106,7 @@ pdfmetrics.registerFont(TTFont("Code", str(FONT_DIR / "simsun.ttc"), subfontInde
 BLACK = colors.HexColor("#000000")
 
 BODY_FONT_SIZE = 9.0
-BODY_LEADING = 13.2
+BODY_LEADING = 12.4
 FRONT_PAGES = 0
 
 PAGE_LAND = landscape(A4)
@@ -203,7 +205,15 @@ def parse_markdown(text: str):
             i += 1
         elif line.startswith("!["):
             match = re.match(r"!\[(.*?)\]\((.*?)\)", line)
-            path = match.group(2) if match else ""
+            raw_target = match.group(2) if match else ""
+            width_ratio = 1.0
+            path = raw_target
+            if "|" in raw_target:
+                path, _, ratio_text = raw_target.partition("|")
+                try:
+                    width_ratio = float(ratio_text)
+                except ValueError:
+                    width_ratio = 1.0
             i += 1
             while i < len(lines) and not lines[i].strip():
                 i += 1
@@ -211,7 +221,7 @@ def parse_markdown(text: str):
             if i < len(lines) and re.match(r"^图\s*[A-Za-z]?\d+", lines[i].strip()):
                 caption = lines[i].strip()
                 i += 1
-            blocks.append(("image", (path, caption)))
+            blocks.append(("image", (path, caption, width_ratio)))
         elif line.startswith(">"):
             quote = []
             while i < len(lines) and lines[i].startswith(">"):
@@ -539,21 +549,30 @@ def build_body(blocks, content_width, include_appendix=False):
                     break
             heading_style = S_H2 if kind == "h2" else S_H3
             group = [Paragraph(rich(str(value)), heading_style)]
-            if i + 1 < len(blocks):
-                next_kind, next_value = blocks[i + 1]
+            # 连续标题（如「3 评测结果」+「3.1 四项指标」）必须一起走，
+            # 否则上级标题会孤零零留在页底。
+            j = i + 1
+            while j < len(blocks) and blocks[j][0] in ("h2", "h3"):
+                sub_kind, sub_value = blocks[j]
+                group.append(
+                    Paragraph(rich(str(sub_value)), S_H2 if sub_kind == "h2" else S_H3)
+                )
+                j += 1
+            if j < len(blocks):
+                next_kind, next_value = blocks[j]
                 if next_kind == "table":
                     group.extend(table_flow(next_value, content_width))
                     story.append(KeepTogether(group))
                     story.append(Spacer(1, 8))
-                    i += 2
+                    i = j + 1
                     continue
                 if next_kind == "p":
                     group.append(Paragraph(rich(str(next_value)), S_BODY))
                     story.append(KeepTogether(group))
-                    i += 2
+                    i = j + 1
                     continue
             story.append(KeepTogether(group))
-            i += 1
+            i = j
             continue
         if kind == "p":
             story.append(Paragraph(rich(str(value)), S_BODY))
@@ -563,7 +582,8 @@ def build_body(blocks, content_width, include_appendix=False):
                 story.append(KeepTogether(flow))
                 story.append(Spacer(1, 8))
         elif kind == "image":
-            path, caption = value
+            path, caption, *rest = value
+            width_ratio = rest[0] if rest else 1.0
             image_path = DOCS_DIR / path
             if not image_path.exists():
                 i += 1
@@ -571,7 +591,7 @@ def build_body(blocks, content_width, include_appendix=False):
             with PILImage.open(image_path) as pil_image:
                 pixel_width, pixel_height = pil_image.size
             width_limit = LAND_CONTENT_WIDTH if in_appendix else content_width
-            max_width = width_limit * 0.96
+            max_width = width_limit * 0.96 * width_ratio
             max_height = LAND_CONTENT_HEIGHT - 2.6 * cm if in_appendix else None
             scale = max_width / pixel_width
             if max_height is not None:
