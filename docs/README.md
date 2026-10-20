@@ -17,6 +17,7 @@
 - `report_shots/`：报告插图。`fig_screen.png` 由 `scripts/make_report_figures.py` 生成，
   `fig_metrics.png` / `fig_latency.png` 由 `scripts/make_report_charts.py` 从 `eval/results` 现算，
   `fig_cmds.png` 由 `scripts/make_report_shots.py` 现场执行四条命令后渲染，
+  `fig_cmds.png` 由 `scripts/make_report_shots.py` 现场执行四条命令后渲染，
   `ui.png` 是 `python -m app.ui` 的真实截图；`demo_cards/` 是早期录屏的片尾卡片（新视频已不用）。
 
 ## internal/
