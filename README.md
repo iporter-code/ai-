@@ -16,7 +16,7 @@
 | 可交互界面 | Gradio Web；另有 CLI |
 | 两种检索各跑 20 题 | `eval/questions.jsonl`；`eval/results/results_*.csv` |
 | 四项指标 | `scripts/score.py`；`eval/results/metrics.md` |
-| 3–5 分钟演示 | `docs/演示录屏.mp4`，脚本见 `docs/演示录屏脚本.md`；关键截图见 `docs/演示录屏关键截图.pdf` |
+| 3–5 分钟演示 | `docs/演示录屏.mp4`，脚本见 `docs/演示录屏脚本.md` |
 
 ## 快速开始
 

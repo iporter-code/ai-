@@ -40,4 +40,4 @@ python scripts/evaluate.py --mode both --sleep 32
 python scripts/score.py eval/results/results_bm25.csv eval/results/results_vector.csv
 ```
 
-输出：`eval/results/results_*.csv`、`raw_*.jsonl`、`metrics.md`。最终结果见 `metrics.md` 和 `docs/实验报告.pdf`。
+输出：`eval/results/results_*.csv`、`raw_*.jsonl`、`metrics.md`。最终结果见 `metrics.md` 和 `docs/实验报告_4页.pdf`。
