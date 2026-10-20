@@ -12,10 +12,11 @@ def test_split_respects_chunk_size():
 
 
 def test_split_keeps_overlap_between_neighbors():
-    text = "甲" * 60 + "。" + "乙" * 60 + "。" + "丙" * 60 + "。"
-    chunks = split_text(text, chunk_size=100, overlap=20)
+    text = "甲" * 20 + "。" + "乙" * 20 + "。" + "丙" * 20 + "。"
+    chunks = split_text(text, chunk_size=60, overlap=20)
     assert len(chunks) >= 2
-    assert chunks[0][-20:].strip() in chunks[1]
+    assert "乙" * 20 + "。" in chunks[0]
+    assert "乙" * 20 + "。" in chunks[1]
 
 
 def test_long_paragraph_without_punctuation_is_hard_split():

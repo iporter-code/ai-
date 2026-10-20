@@ -65,7 +65,7 @@ draw.text((60, 420), "② 在线：检索与生成", font=title_font, fill=INK)
 
 box(50, 140, 260, 110, "data/raw", "PDF / MD / TXT")
 box(350, 140, 250, 110, "解析与切分", "300 字 / 重叠 50 字")
-box(640, 140, 260, 110, "片段库", "chunks.json · 27 段")
+box(640, 140, 260, 110, "片段库", "chunks.json · 32 段")
 box(970, 90, 300, 105, "BM25 索引", "jieba + BM25Okapi")
 box(970, 235, 300, 105, "向量索引", "bge-small-zh · 512 维")
 

@@ -1,0 +1,10 @@
+{"id": "c01", "type": "answerable", "question": "课程作业的截止日期是哪天？", "expected": "answer"}
+{"id": "c02", "type": "answerable", "question": "作者用的 bge 模型向量维度是多少？", "expected": "answer"}
+{"id": "c03", "type": "answerable", "question": "BM25 的 b 参数控制什么？", "expected": "answer"}
+{"id": "c04", "type": "answerable", "question": "作者第一次跑最小链路时读入了几篇文档？", "expected": "answer"}
+{"id": "c05", "type": "answerable", "question": "CPU 版 torch 的安装命令是什么？", "expected": "answer"}
+{"id": "c06", "type": "reject", "question": "作者实习的公司名称是什么？", "expected": "reject"}
+{"id": "c07", "type": "reject", "question": "这门课的期中考试安排在几月几日？", "expected": "reject"}
+{"id": "c08", "type": "reject", "question": "作者的 GitHub 用户名是什么？", "expected": "reject"}
+{"id": "c09", "type": "reject", "question": "作者最喜欢的电影是哪一部？", "expected": "reject"}
+{"id": "c10", "type": "reject", "question": "Chroma 数据库的默认端口是多少？", "expected": "reject"}

@@ -221,6 +221,19 @@ def _call_llm(
                 parts.append(content)
             text = "".join(parts).strip()
             if not text:
+                # Some OpenAI-compatible gateways occasionally return an empty
+                # stream. Retry once without streaming before giving up.
+                response = client.chat.completions.create(
+                    model=settings.llm_model,
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=settings.temperature,
+                    max_tokens=800,
+                )
+                text = (response.choices[0].message.content or "").strip()
+            if not text:
                 raise RuntimeError("模型返回了空答案")
             return text
         except APIStatusError as exc:

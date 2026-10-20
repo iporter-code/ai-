@@ -195,6 +195,7 @@ def main() -> int:
             refusal_reason = ""
             from_gate = ""
             candidates = []
+            citation_details = []
             try:
                 if args.retrieval_only:
                     candidates = retriever.search(question, settings.top_k)
@@ -207,6 +208,15 @@ def main() -> int:
                     raw_answer = result.raw_answer or result.answer
                     refusal_reason = result.refusal_reason
                     from_gate = str(result.from_gate)
+                    citation_details = [
+                        {
+                            "index": c.index,
+                            "doc_id": c.chunk.doc_id,
+                            "chunk_index": c.chunk.chunk_index,
+                            "chunk_text": c.chunk.text,
+                        }
+                        for c in result.citations
+                    ]
                     if result.first_token_s is not None:
                         first_token = f"{result.first_token_s:.2f}"
             except Exception as exc:  # noqa: BLE001
@@ -228,6 +238,9 @@ def main() -> int:
                     "refusal_reason": refusal_reason,
                     "from_gate": from_gate,
                     "citations": citations,
+                    "citation_details": json.dumps(
+                        citation_details, ensure_ascii=False
+                    ),
                     "first_token_s": first_token,
                     "latency_s": f"{latency:.2f}",
                     "retrieval_hit": hit_value,
@@ -246,6 +259,7 @@ def main() -> int:
                     "refusal_reason": refusal_reason,
                     "from_gate": None if from_gate == "" else from_gate == "True",
                     "citations": citations,
+                    "citation_details": citation_details,
                     "first_token_s": (
                         float(first_token) if first_token else None
                     ),

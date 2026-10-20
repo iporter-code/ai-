@@ -103,8 +103,8 @@ pdfmetrics.registerFont(TTFont("Code", str(FONT_DIR / "simsun.ttc"), subfontInde
 
 BLACK = colors.HexColor("#000000")
 
-BODY_FONT_SIZE = 9.4
-BODY_LEADING = 14.2
+BODY_FONT_SIZE = 9.0
+BODY_LEADING = 13.2
 FRONT_PAGES = 0
 
 PAGE_LAND = landscape(A4)
@@ -167,8 +167,8 @@ S_ABSTRACT = style(
 )
 S_KEYWORDS = style("Keywords", fontSize=10.5, leading=18, alignment=TA_JUSTIFY, spaceAfter=6)
 S_BODY = style("Body", firstLineIndent=21, alignment=TA_JUSTIFY, spaceAfter=4)
-S_TABLE_CELL = style("TableCell", fontSize=7.6, leading=9.6, spaceAfter=0)
-S_TABLE_HEAD = style("TableHead", fontName="Hei", fontSize=7.6, leading=9.6, spaceAfter=0)
+S_TABLE_CELL = style("TableCell", fontSize=7.3, leading=9.2, spaceAfter=0)
+S_TABLE_HEAD = style("TableHead", fontName="Hei", fontSize=7.3, leading=9.2, spaceAfter=0)
 S_TABLE_CELL_S = style("TableCellSmall", fontSize=8.2, leading=10.6, spaceAfter=0)
 S_TABLE_HEAD_S = style("TableHeadSmall", fontName="Hei", fontSize=8.2, leading=10.6, spaceAfter=0)
 S_CAPTION = style("Caption", fontName="Hei", fontSize=8.8, leading=12, alignment=TA_CENTER, spaceBefore=2, spaceAfter=4)

@@ -38,9 +38,19 @@ def _split_sentences(text: str) -> list[str]:
 
 
 def _tail(text: str, overlap: int) -> str:
+    """Carry complete trailing sentences, never half a word or half a sentence."""
     if overlap <= 0:
         return ""
-    return text[-overlap:].strip()
+    sentences = _split_sentences(text)
+    if not sentences:
+        return text[-overlap:].strip()
+    tail: list[str] = []
+    for sentence in reversed(sentences):
+        candidate = "\n".join([sentence, *tail])
+        if len(candidate) > overlap * 2:
+            break
+        tail.insert(0, sentence)
+    return "\n".join(tail).strip()
 
 
 def split_text(text: str, chunk_size: int = 500, overlap: int = 80) -> list[str]:
