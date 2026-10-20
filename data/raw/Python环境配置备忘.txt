@@ -1,0 +1,66 @@
+Python 环境配置备忘（我的踩坑笔记）
+================================
+
+一、创建虚拟环境
+----------------
+Windows 下创建虚拟环境的标准命令：
+
+    python -m venv .venv
+    .venv\Scripts\activate
+
+macOS / Linux 下激活命令是：
+
+    source .venv/bin/activate
+
+注意：Windows 的 PowerShell 默认禁止运行脚本，激活时报红字错误的话，
+需要先执行（管理员 PowerShell）：
+
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+二、pip 国内镜像
+----------------
+默认源在国外，慢到怀疑人生。临时用清华镜像：
+
+    pip install 包名 -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+永久配置（推荐）：
+
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+三、常见报错处理
+----------------
+1. Microsoft Visual C++ 14.0 or greater is required
+   原因：某些包（如老版本 numpy 源码编译）需要 C++ 编译环境。
+   解决：安装 Microsoft C++ 生成工具（Build Tools），
+   或者干脆换有预编译 wheel 的包版本，99% 的情况不用装编译器。
+
+2. ModuleNotFoundError: No module named 'xxx'
+   十有八九是 pip 装到了别的 Python 上。用下面的命令保证装对地方：
+
+       python -m pip install xxx
+
+   道理：直接敲 pip 用的是 PATH 里的第一个 pip，
+   python -m pip 用的是当前 python 解释器对应的 pip。
+
+3. pip 版本太旧导致装不上新包：
+
+       python -m pip install --upgrade pip
+
+四、依赖管理习惯
+----------------
+- 每个项目一个独立虚拟环境，不要全局乱装。
+- 依赖写进 requirements.txt，版本号尽量锁定：
+
+      pip freeze > requirements.txt
+
+- 给别人交付代码时，README 里写清楚 Python 版本要求。
+  我自己用的是 Python 3.13，sentence-transformers 需要 torch 支持，
+  CPU 版安装命令：
+
+      pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+五、我的教训
+----------------
+上学期我图省事全局装包，结果课程 A 要 numpy 1.x、课程 B 要 numpy 2.x，
+两个作业互相打架，最后环境全崩只能重装系统级的 Python。
+从那以后我每个项目都老老实实建 venv。虚拟环境不值钱，重装环境才要命。
