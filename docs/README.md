@@ -13,12 +13,10 @@
 - `AI错误清单.md`：AI 生成代码的 6 条错误与修正记录（报告 §5 的完整版）；
 - `demo_run.log` / `demo_run.json`：演示视频的原始运行日志（问题、答案、引用、首 token、Top-4 分数），
   由 `scripts/record_demo.py` 生成，可用来核对视频里的每个字符；
-- `demo.ps1`：早期录屏用过的命令脚本，已由上面两条脚本取代；
 - `report_shots/`：报告插图。`fig_screen.png` 由 `scripts/make_report_figures.py` 生成，
   `fig_metrics.png` / `fig_latency.png` 由 `scripts/make_report_charts.py` 从 `eval/results` 现算，
   `fig_cmds.png` 由 `scripts/make_report_shots.py` 现场执行四条命令后渲染，
-  `fig_cmds.png` 由 `scripts/make_report_shots.py` 现场执行四条命令后渲染，
-  `ui.png` 是 `python -m app.ui` 的真实截图；`demo_cards/` 是早期录屏的片尾卡片（新视频已不用）。
+  `ui.png` 是 `python -m app.ui` 的真实截图。
 
 ## internal/
 
