@@ -16,8 +16,6 @@ pip-*
 .pip_probe/
 previous_eval/
 .commandcode/
-# 内部自查材料（评审意见、核查记录、旧版报告），不进提交包
-docs/internal/
 docs/demo_shots/
 .DS_Store
 

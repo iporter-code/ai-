@@ -17,7 +17,3 @@
   `fig_metrics.png` / `fig_latency.png` 由 `scripts/make_report_charts.py` 从 `eval/results` 现算，
   `fig_cmds.png` 由 `scripts/make_report_shots.py` 现场执行四条命令后渲染，
   `ui.png` 是 `python -m app.ui` 的真实截图。
-
-## internal/
-
-`internal/` 存放自查材料（评审意见原文、核查记录、旧版无截图报告），已在 `.gitignore` 中排除，**不属于交付内容**。
